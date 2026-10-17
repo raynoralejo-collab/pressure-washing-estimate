@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Instant Estimate — Clearwater Pressure Washing</title>
+<meta name="description" content="Get a pressure washing price in seconds. Enter your measurements and see your estimate right away.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#10222E;
+    --ink-soft:#4A6372;
+    --rule:#D5DFE5;
+    --surface:#FFFFFF;
+    --wash:#EEF3F6;
+    --water:#0E7FA8;
+    --water-deep:#095E7D;
+    --flag:#B3531B;
+    --ok:#117A54;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--wash);
+    color:var(--ink);
+    font-family:'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size:16px;
+    line-height:1.55;
+  }
+
+  /* ---------- Header ---------- */
+  .masthead{background:var(--ink);color:#fff;padding:22px 24px;}
+  .masthead-inner{max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px 24px;align-items:baseline;justify-content:space-between;}
+  .brand{font-weight:800;font-size:19px;letter-spacing:-0.015em;margin:0;}
+  .masthead a{color:#9ED6EC;text-decoration:none;font-weight:500;font-size:15px;}
+  .masthead a:hover{text-decoration:underline;}
+
+  .intro{max-width:1080px;margin:0 auto;padding:34px 24px 0;}
+  .intro h1{
+    font-size:clamp(28px,4.6vw,42px);
+    line-height:1.12;letter-spacing:-0.025em;font-weight:800;
+    margin:0 0 10px;max-width:16ch;
+  }
+  .intro p{margin:0;color:var(--ink-soft);max-width:56ch;font-size:17px;}
+
+  /* ---------- Before / after reveal ---------- */
+  .reveal-wrap{max-width:1080px;margin:0 auto;padding:24px 24px 0;}
+  .reveal{
+    position:relative;
+    height:clamp(150px,24vw,210px);
+    border-radius:10px;
+    overflow:hidden;
+    border:1px solid var(--rule);
+    /* clean lap siding */
+    background:
+      repeating-linear-gradient(180deg,
+        rgba(0,0,0,.10) 0px, rgba(0,0,0,.10) 1px,
+        rgba(255,255,255,0) 1px, rgba(255,255,255,0) 26px),
+      linear-gradient(180deg,#F4F8FA 0%,#E4EDF2 100%);
+  }
+  .reveal-dirty{
+    position:absolute;inset:0;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.015 0.035' numOctaves='4' seed='7'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.30 0 0 0 0 0.29 0 0 0 0 0.19 0 0 0 -1.15 0.92'/%3E%3C/filter%3E%3Crect width='520' height='300' filter='url(%23g)'/%3E%3C/svg%3E"),
+      repeating-linear-gradient(180deg,
+        rgba(0,0,0,.16) 0px, rgba(0,0,0,.16) 1px,
+        rgba(255,255,255,0) 1px, rgba(255,255,255,0) 26px),
+      linear-gradient(180deg,#CFD2C4 0%,#B9BCA9 100%);
+    clip-path:inset(0 50% 0 0);
+  }
+  .reveal-line{
+    position:absolute;top:0;bottom:0;left:50%;width:2px;
+    background:#fff;box-shadow:0 0 0 1px rgba(16,34,46,.25);
+    transform:translateX(-1px);pointer-events:none;
+  }
+  .reveal-knob{
+    position:absolute;top:50%;left:50%;
+    width:38px;height:38px;margin:-19px 0 0 -19px;
+    border-radius:50%;background:#fff;
+    box-shadow:0 2px 8px rgba(16,34,46,.35);
+    pointer-events:none;
+    display:grid;place-items:center;
+  }
+  .reveal-knob svg{display:block;}
+  .reveal-tag{
+    position:absolute;bottom:12px;
+    font-size:13px;font-weight:600;
+    background:rgba(255,255,255,.88);
+    color:var(--ink);
+    padding:3px 9px;border-radius:5px;
+    pointer-events:none;
+  }
+  .tag-before{left:14px;}
+  .tag-after{right:14px;}
+  .reveal input[type=range]{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    margin:0;opacity:0;cursor:ew-resize;
+  }
+  .reveal:focus-within{outline:3px solid var(--water);outline-offset:2px;}
+  .reveal-cap{margin:9px 0 0;font-size:14px;color:var(--ink-soft);}
+
+  /* ---------- Layout ---------- */
+  .sheet{
+    max-width:1080px;margin:0 auto;
+    padding:26px 24px 64px;
+    display:grid;gap:22px;grid-template-columns:1fr;
+  }
+  @media (min-width:920px){
+    .sheet{grid-template-columns:minmax(0,1.35fr) minmax(320px,1fr);gap:22px 30px;align-items:start;}
+    .block-services{grid-column:1;grid-row:1;}
+    .block-details {grid-column:1;grid-row:2;}
+    .block-send    {grid-column:1;grid-row:3;}
+    .block-estimate{grid-column:2;grid-row:1 / span 3;position:sticky;top:22px;}
+  }
+
+  .panel{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:24px;}
+  .panel h2{font-size:13px;font-weight:600;letter-spacing:0.02em;color:var(--ink-soft);margin:0 0 4px;}
+  .panel h3{font-size:21px;font-weight:700;letter-spacing:-0.015em;margin:0 0 18px;}
+
+  /* ---------- Service rows ---------- */
+  .svc{border-top:1px solid var(--rule);padding:14px 0;}
+  .svc:first-of-type{border-top:0;padding-top:4px;}
+  .svc-head{display:flex;align-items:flex-start;gap:12px;cursor:pointer;}
+  .svc-head input[type=checkbox]{width:21px;height:21px;margin:2px 0 0;flex:none;accent-color:var(--water);cursor:pointer;}
+  .svc-name{font-weight:600;display:block;}
+  .svc-rate{display:block;color:var(--ink-soft);font-size:14.5px;}
+
+  .svc-body{display:none;margin:12px 0 2px 33px;}
+  .svc.on .svc-body{display:block;}
+
+  .qty-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .qty-row input[type=number]{
+    width:132px;font:inherit;font-weight:600;
+    padding:10px 12px;border:1.5px solid var(--rule);
+    border-radius:7px;background:#fff;color:var(--ink);
+  }
+  .qty-row .unit{color:var(--ink-soft);font-size:15px;}
+  .qty-row .line-amt{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums;}
+
+  .helper-btn{
+    background:none;border:0;padding:4px 0;margin-top:7px;
+    font:inherit;font-size:14px;font-weight:600;
+    color:var(--water);cursor:pointer;text-decoration:underline;
+  }
+  .helper{
+    display:none;margin-top:10px;padding:13px 14px;
+    background:var(--wash);border-radius:8px;
+  }
+  .helper.open{display:block;}
+  .helper p{margin:0 0 9px;font-size:14px;color:var(--ink-soft);}
+  .helper-inputs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:15px;}
+  .helper-inputs input{
+    width:88px;font:inherit;padding:8px 10px;
+    border:1.5px solid var(--rule);border-radius:6px;background:#fff;color:var(--ink);
+  }
+  .helper-out{font-weight:700;font-variant-numeric:tabular-nums;}
+
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+  input[type=number]{-moz-appearance:textfield;}
+
+  /* ---------- Customer fields ---------- */
+  .field{margin-bottom:16px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{display:block;font-weight:600;font-size:15px;margin-bottom:6px;}
+  .field input, .field textarea{
+    width:100%;font:inherit;padding:11px 13px;
+    border:1.5px solid var(--rule);border-radius:7px;background:#fff;color:var(--ink);
+  }
+  .field textarea{resize:vertical;min-height:72px;}
+  .pair{display:grid;gap:16px;}
+  @media (min-width:560px){.pair{grid-template-columns:1fr 1fr;}}
+
+  input:focus-visible, textarea:focus-visible, button:focus-visible, [type=checkbox]:focus-visible{
+    outline:3px solid var(--water);outline-offset:2px;
+  }
+  input:focus, textarea:focus{border-color:var(--water);}
+
+  /* ---------- Estimate panel ---------- */
+  .est-total{
+    font-size:clamp(44px,8vw,60px);font-weight:800;
+    letter-spacing:-0.035em;line-height:1;
+    font-variant-numeric:tabular-nums;margin:2px 0 6px;
+  }
+  .est-total.empty{color:var(--rule);}
+  .est-caption{color:var(--ink-soft);font-size:15px;margin:0 0 18px;}
+  .lines{list-style:none;margin:0;padding:18px 0 0;border-top:1px solid var(--rule);}
+  .lines li{display:flex;justify-content:space-between;gap:14px;padding:5px 0;font-size:15.5px;}
+  .lines li span:last-child{font-variant-numeric:tabular-nums;font-weight:600;flex:none;}
+  .lines .sub{border-top:1px solid var(--rule);margin-top:9px;padding-top:11px;}
+  .lines .min{color:var(--flag);}
+  .ratecard{margin-top:18px;padding-top:16px;border-top:1px solid var(--rule);font-size:14px;color:var(--ink-soft);}
+  .ratecard b{color:var(--ink);font-weight:600;}
+  .ratecard div{display:flex;justify-content:space-between;padding:2px 0;}
+
+  /* ---------- Send ---------- */
+  .send-btn{
+    width:100%;font:inherit;font-weight:700;font-size:17px;
+    color:#fff;background:var(--water);border:0;border-radius:8px;
+    padding:16px 20px;cursor:pointer;transition:background .15s ease;
+  }
+  .send-btn:hover:not(:disabled){background:var(--water-deep);}
+  .send-btn:disabled{background:#9FB4BF;cursor:not-allowed;}
+  .send-note{margin:12px 0 0;font-size:14px;color:var(--ink-soft);}
+
+  .msg{margin-top:16px;padding:15px 17px;border-radius:8px;font-size:15.5px;display:none;}
+  .msg.show{display:block;}
+  .msg.good{background:#E6F4EE;border:1px solid #9ED3BE;color:var(--ok);}
+  .msg.bad{background:#FBEAE4;border:1px solid #E9B49C;color:#9A3412;}
+  .msg b{display:block;margin-bottom:3px;}
+  .msg a{color:inherit;}
+
+  .finepr{max-width:72ch;margin:0 auto;padding:0 24px 56px;color:var(--ink-soft);font-size:14px;}
+
+  /* ---------- Mobile running total ---------- */
+  .dock{
+    position:fixed;left:0;right:0;bottom:0;z-index:40;
+    background:var(--ink);color:#fff;
+    padding:11px 20px;
+    display:none;align-items:center;justify-content:space-between;gap:14px;
+    box-shadow:0 -2px 14px rgba(16,34,46,.22);
+  }
+  .dock small{display:block;font-size:12.5px;color:#9FBCCB;line-height:1.2;}
+  .dock strong{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;}
+  .dock button{
+    font:inherit;font-weight:700;font-size:15px;
+    background:var(--water);color:#fff;border:0;
+    border-radius:7px;padding:11px 17px;cursor:pointer;flex:none;
+  }
+  @media (max-width:919px){
+    .dock.live{display:flex;}
+    body.docked{padding-bottom:78px;}
+    .block-estimate{order:-1;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <p class="brand">Clearwater Pressure Washing</p>
+    <a href="tel:+15550134477">(555) 013-4477</a>
+  </div>
+</header>
+
+<div class="intro">
+  <h1>Your price, before we hang up.</h1>
+  <p>Tick what needs cleaning, enter the measurements, and your estimate updates as you type. Send it over and we’ll call to book a date.</p>
+</div>
+
+<!-- ============ BEFORE / AFTER ============ -->
+<div class="reveal-wrap">
+  <div class="reveal" id="reveal">
+    <div class="reveal-dirty" id="dirty"></div>
+    <span class="reveal-tag tag-before">Before</span>
+    <span class="reveal-tag tag-after">After</span>
+    <div class="reveal-line" id="rline"></div>
+    <div class="reveal-knob" id="rknob">
+      <svg width="17" height="11" viewBox="0 0 17 11" fill="none" aria-hidden="true">
+        <path d="M5 1L1 5.5L5 10M12 1l4 4.5-4 4.5" stroke="#10222E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <input type="range" id="rslider" min="0" max="100" value="50" step="0.5" aria-label="Drag to compare dirty and clean siding">
+  </div>
+  <p class="reveal-cap">Drag the handle — that’s the same wall, same afternoon.</p>
+</div>
+
+<main class="sheet">
+
+  <!-- ============ SERVICES ============ -->
+  <section class="panel block-services">
+    <h2>Step 1</h2>
+    <h3>What needs cleaning?</h3>
+
+    <div class="svc" data-svc="house">
+      <label class="svc-head">
+        <input type="checkbox" data-toggle>
+        <span>
+          <span class="svc-name">House exterior</span>
+          <span class="svc-rate">$0.15 per square foot of wall surface</span>
+        </span>
+      </label>
+      <div class="svc-body">
+        <div class="qty-row">
+          <input type="number" data-qty min="0" step="1" inputmode="decimal" placeholder="0" aria-label="House exterior, square feet">
+          <span class="unit">sq ft</span>
+          <span class="line-amt" data-line>$0.00</span>
+        </div>
+        <button type="button" class="helper-btn" data-helper-btn>Not sure? Work it out</button>
+        <div class="helper" data-helper>
+          <p>Walk the outside of the house and add up the wall lengths, then multiply by the height.</p>
+          <div class="helper-inputs">
+            <input type="number" data-h-a min="0" step="1" inputmode="decimal" placeholder="Length" aria-label="Total wall length in feet">
+            <span>ft long ×</span>
+            <input type="number" data-h-b min="0" step="1" inputmode="decimal" placeholder="Height" aria-label="Wall height in feet">
+            <span>ft high =</span>
+            <span class="helper-out" data-h-out>0 sq ft</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="svc" data-svc="driveway">
+      <label class="svc-head">
+        <input type="checkbox" data-toggle>
+        <span>
+          <span class="svc-name">Driveway</span>
+          <span class="svc-rate">$0.12 per square foot</span>
+        </span>
+      </label>
+      <div class="svc-body">
+        <div class="qty-row">
+          <input type="number" data-qty min="0" step="1" inputmode="decimal" placeholder="0" aria-label="Driveway, square feet">
+          <span class="unit">sq ft</span>
+          <span class="line-amt" data-line>$0.00</span>
+        </div>
+        <button type="button" class="helper-btn" data-helper-btn>Not sure? Work it out</button>
+        <div class="helper" data-helper>
+          <p>Pace it out, heel to toe — one step is roughly one foot.</p>
+          <div class="helper-inputs">
+            <input type="number" data-h-a min="0" step="1" inputmode="decimal" placeholder="Length" aria-label="Driveway length in feet">
+            <span>ft ×</span>
+            <input type="number" data-h-b min="0" step="1" inputmode="decimal" placeholder="Width" aria-label="Driveway width in feet">
+            <span>ft =</span>
+            <span class="helper-out" data-h-out>0 sq ft</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="svc" data-svc="deck">
+      <label class="svc-head">
+        <input type="checkbox" data-toggle>
+        <span>
+          <span class="svc-name">Deck or patio</span>
+          <span class="svc-rate">$0.30 per square foot</span>
+        </span>
+      </label>
+      <div class="svc-body">
+        <div class="qty-row">
+          <input type="number" data-qty min="0" step="1" inputmode="decimal" placeholder="0" aria-label="Deck, square feet">
+          <span class="unit">sq ft</span>
+          <span class="line-amt" data-line>$0.00</span>
+        </div>
+        <button type="button" class="helper-btn" data-helper-btn>Not sure? Work it out</button>
+        <div class="helper" data-helper>
+          <p>Measure the floor of the deck, not the railings.</p>
+          <div class="helper-inputs">
+            <input type="number" data-h-a min="0" step="1" inputmode="decimal" placeholder="Length" aria-label="Deck length in feet">
+            <span>ft ×</span>
+            <input type="number" data-h-b min="0" step="1" inputmode="decimal" placeholder="Width" aria-label="Deck width in feet">
+            <span>ft =</span>
+            <span class="helper-out" data-h-out>0 sq ft</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="svc" data-svc="fence">
+      <label class="svc-head">
+        <input type="checkbox" data-toggle>
+        <span>
+          <span class="svc-name">Fence</span>
+          <span class="svc-rate">$1.00 per linear foot — measure the length, not the area</span>
+        </span>
+      </label>
+      <div class="svc-body">
+        <div class="qty-row">
+          <input type="number" data-qty min="0" step="1" inputmode="decimal" placeholder="0" aria-label="Fence, linear feet">
+          <span class="unit">linear ft</span>
+          <span class="line-amt" data-line>$0.00</span>
+        </div>
+        <button type="button" class="helper-btn" data-helper-btn>Not sure? Work it out</button>
+        <div class="helper" data-helper>
+          <p>Walk each run of fence and add the lengths together. Height doesn’t change the price.</p>
+          <div class="helper-inputs">
+            <input type="number" data-h-a min="0" step="1" inputmode="decimal" placeholder="Runs" aria-label="Number of fence runs">
+            <span>runs ×</span>
+            <input type="number" data-h-b min="0" step="1" inputmode="decimal" placeholder="Length" aria-label="Average run length in feet">
+            <span>ft each =</span>
+            <span class="helper-out" data-h-out>0 linear ft</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ESTIMATE ============ -->
+  <aside class="panel block-estimate" aria-label="Your estimate">
+    <h2>Your estimate</h2>
+    <p class="est-total empty" id="total" aria-live="polite">$0.00</p>
+    <p class="est-caption" id="caption">Pick a service above to see your price.</p>
+    <ul class="lines" id="lines"></ul>
+    <div class="ratecard">
+      <div><span>House</span><b>$0.15 / sq ft</b></div>
+      <div><span>Driveway</span><b>$0.12 / sq ft</b></div>
+      <div><span>Deck</span><b>$0.30 / sq ft</b></div>
+      <div><span>Fence</span><b>$1.00 / linear ft</b></div>
+      <div><span>Minimum job</span><b>$150.00</b></div>
+    </div>
+  </aside>
+
+  <!-- ============ DETAILS ============ -->
+  <section class="panel block-details">
+    <h2>Step 2</h2>
+    <h3>Where should we send it?</h3>
+    <form id="quoteForm" novalidate>
+      <div class="pair">
+        <div class="field">
+          <label for="cname">Full name</label>
+          <input type="text" id="cname" name="name" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="cphone">Phone</label>
+          <input type="tel" id="cphone" name="phone" autocomplete="tel" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="cemail">Email</label>
+        <input type="email" id="cemail" name="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="caddr">Property address</label>
+        <textarea id="caddr" name="address" autocomplete="street-address" required></textarea>
+      </div>
+      <div class="field">
+        <label for="cnotes">Anything we should know? (optional)</label>
+        <textarea id="cnotes" name="notes" placeholder="Gate code, heavy mildew, two-storey, preferred days…"></textarea>
+      </div>
+      <input type="text" name="_honey" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true">
+    </form>
+  </section>
+
+  <!-- ============ SEND ============ -->
+  <div class="block-send">
+    <button type="button" class="send-btn" id="sendBtn">Send my estimate</button>
+    <p class="send-note">We’ll email your estimate to our office and call you to confirm a date.</p>
+    <div class="msg" id="msg" role="status" aria-live="polite"></div>
+  </div>
+
+</main>
+
+<p class="finepr">
+  This estimate is based on the measurements you give us. We confirm the final price on site before any work starts — if your numbers are close, so is the price. Jobs under $150 are billed at our $150 minimum.
+</p>
+
+<!-- ============ MOBILE RUNNING TOTAL ============ -->
+<div class="dock" id="dock">
+  <div>
+    <small>Your estimate</small>
+    <strong id="dockTotal">$0.00</strong>
+  </div>
+  <button type="button" id="dockBtn">Send it</button>
+</div>
+
+<script>
+/* ------------------------------------------------------------------
+   CONFIG — change this one line to the inbox that owns the form.
+   FormSubmit emails this address, and CCs the office address below.
+------------------------------------------------------------------- */
+var FORM_ENDPOINT = "https://formsubmit.co/ajax/YOUR_EMAIL_HERE";
+var OFFICE_EMAIL  = "careers@finchharbor.com";
+
+/* ---------------- Pricing ---------------- */
+var RATES = {
+  house:    { label: "House exterior", rate: 0.15, unit: "sq ft" },
+  driveway: { label: "Driveway",       rate: 0.12, unit: "sq ft" },
+  deck:     { label: "Deck or patio",  rate: 0.30, unit: "sq ft" },
+  fence:    { label: "Fence",          rate: 1.00, unit: "linear ft" }
+};
+var MINIMUM = 150;
+
+function round2(n){ return Math.round((n + Number.EPSILON) * 100) / 100; }
+function money(n){ return "$" + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+function num(el){ var v = parseFloat(el.value); return (isFinite(v) && v > 0) ? v : 0; }
+
+var state = { lines: [], subtotal: 0, total: 0, minApplied: false };
+
+function price(){
+  var lines = [], subtotal = 0;
+
+  document.querySelectorAll(".svc").forEach(function(row){
+    var key   = row.getAttribute("data-svc");
+    var on    = row.querySelector("[data-toggle]").checked;
+    var field = row.querySelector("[data-qty]");
+    var cell  = row.querySelector("[data-line]");
+
+    var qty = num(field);
+    var amount = on ? round2(qty * RATES[key].rate) : 0;
+    cell.textContent = money(amount);
+
+    if (on && qty > 0){
+      lines.push({ key: key, label: RATES[key].label, qty: qty, unit: RATES[key].unit, amount: amount });
+      subtotal = round2(subtotal + amount);
+    }
+  });
+
+  var minApplied = subtotal > 0 && subtotal < MINIMUM;
+  var total = subtotal > 0 ? Math.max(subtotal, MINIMUM) : 0;
+
+  state = { lines: lines, subtotal: subtotal, total: total, minApplied: minApplied };
+  render();
+}
+
+function render(){
+  var totalEl = document.getElementById("total");
+  var capEl   = document.getElementById("caption");
+  var listEl  = document.getElementById("lines");
+  var dock    = document.getElementById("dock");
+
+  totalEl.textContent = money(state.total);
+  totalEl.classList.toggle("empty", state.total === 0);
+  document.getElementById("dockTotal").textContent = money(state.total);
+
+  dock.classList.toggle("live", state.total > 0);
+  document.body.classList.toggle("docked", state.total > 0);
+
+  if (state.total === 0){
+    capEl.textContent = "Pick a service above to see your price.";
+  } else if (state.minApplied){
+    capEl.textContent = "Our $150 minimum applies to this job.";
+  } else {
+    capEl.textContent = "Total for the work listed below.";
+  }
+
+  listEl.innerHTML = "";
+  state.lines.forEach(function(l){
+    listEl.insertAdjacentHTML("beforeend",
+      "<li><span>" + l.label + " — " + l.qty.toLocaleString() + " " + l.unit +
+      "</span><span>" + money(l.amount) + "</span></li>");
+  });
+
+  if (state.minApplied){
+    listEl.insertAdjacentHTML("beforeend",
+      "<li class='sub'><span>Subtotal</span><span>" + money(state.subtotal) + "</span></li>" +
+      "<li class='min'><span>Minimum job adjustment</span><span>+" + money(round2(MINIMUM - state.subtotal)) + "</span></li>");
+  }
+}
+
+/* ---------------- Service rows + measurement helpers ---------------- */
+document.querySelectorAll(".svc").forEach(function(row){
+  var key    = row.getAttribute("data-svc");
+  var box    = row.querySelector("[data-toggle]");
+  var field  = row.querySelector("[data-qty]");
+  var hBtn   = row.querySelector("[data-helper-btn]");
+  var helper = row.querySelector("[data-helper]");
+  var hA     = row.querySelector("[data-h-a]");
+  var hB     = row.querySelector("[data-h-b]");
+  var hOut   = row.querySelector("[data-h-out]");
+
+  box.addEventListener("change", function(){
+    row.classList.toggle("on", box.checked);
+    if (box.checked){ field.focus(); }
+    else { field.value = ""; hA.value = ""; hB.value = ""; helper.classList.remove("open"); }
+    price();
+  });
+
+  field.addEventListener("input", price);
+
+  hBtn.addEventListener("click", function(){
+    var open = helper.classList.toggle("open");
+    hBtn.textContent = open ? "Hide the calculator" : "Not sure? Work it out";
+    if (open) hA.focus();
+  });
+
+  function recalc(){
+    var result = Math.round(num(hA) * num(hB));
+    hOut.textContent = result.toLocaleString() + " " + RATES[key].unit;
+    field.value = result > 0 ? result : "";
+    price();
+  }
+  hA.addEventListener("input", recalc);
+  hB.addEventListener("input", recalc);
+});
+
+/* ---------------- Before / after reveal ---------------- */
+(function(){
+  var slider = document.getElementById("rslider");
+  var dirty  = document.getElementById("dirty");
+  var line   = document.getElementById("rline");
+  var knob   = document.getElementById("rknob");
+
+  function place(pct){
+    dirty.style.clipPath = "inset(0 " + (100 - pct) + "% 0 0)";
+    line.style.left = pct + "%";
+    knob.style.left = pct + "%";
+  }
+  slider.addEventListener("input", function(){ place(parseFloat(slider.value)); });
+  place(50);
+
+  // One reveal on load, so the page shows what it does without being asked.
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reduce){
+    place(14); slider.value = 14;
+    var start = null, from = 14, to = 56, ms = 950;
+    requestAnimationFrame(function step(t){
+      if (start === null) start = t;
+      var p = Math.min((t - start) / ms, 1);
+      var e = 1 - Math.pow(1 - p, 3);
+      var v = from + (to - from) * e;
+      slider.value = v; place(v);
+      if (p < 1) requestAnimationFrame(step);
+    });
+  }
+})();
+
+/* ---------------- Submit ---------------- */
+function reference(){
+  var d = new Date();
+  return "CW-" + d.getFullYear() +
+    String(d.getMonth() + 1).padStart(2, "0") +
+    String(d.getDate()).padStart(2, "0") + "-" +
+    String(Math.floor(1000 + Math.random() * 9000));
+}
+
+function say(kind, title, body){
+  var box = document.getElementById("msg");
+  box.className = "msg show " + kind;
+  box.innerHTML = "<b>" + title + "</b>" + body;
+  box.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+
+var btn  = document.getElementById("sendBtn");
+var form = document.getElementById("quoteForm");
+var sending = false;
+
+document.getElementById("dockBtn").addEventListener("click", function(){
+  document.getElementById("cname").scrollIntoView({ block: "center", behavior: "smooth" });
+  document.getElementById("cname").focus({ preventScroll: true });
+});
+
+btn.addEventListener("click", function(){
+  if (sending) return;
+
+  var name    = form.name.value.trim();
+  var email   = form.email.value.trim();
+  var phone   = form.phone.value.trim();
+  var address = form.address.value.trim();
+  var notes   = form.notes.value.trim();
+
+  if (state.total === 0){
+    say("bad", "Nothing to quote yet", "Tick a service and enter a measurement, then send it over.");
+    return;
+  }
+  if (!name || !email || !phone || !address){
+    say("bad", "A few details are missing", "Fill in your name, phone, email and property address so we can reach you.");
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    say("bad", "Check that email address", "It doesn’t look quite right — we need a working address to send your estimate.");
+    document.getElementById("cemail").focus();
+    return;
+  }
+  if (form._honey.value){ return; }
+
+  var ref = reference();
+  var breakdown = state.lines.map(function(l){
+    return l.label + ": " + l.qty.toLocaleString() + " " + l.unit +
+           " @ " + money(RATES[l.key].rate) + " = " + money(l.amount);
+  }).join("\n");
+
+  var payload = new FormData();
+  payload.append("_subject", "New pressure washing estimate — " + name + " — " + money(state.total));
+  payload.append("_cc", OFFICE_EMAIL);
+  payload.append("_template", "table");
+  payload.append("_captcha", "false");
+  payload.append("_replyto", email);
+
+  payload.append("Quote reference", ref);
+  payload.append("Customer name", name);
+  payload.append("Email", email);
+  payload.append("Phone", phone);
+  payload.append("Property address", address);
+  payload.append("Services requested", breakdown);
+  payload.append("Subtotal", money(state.subtotal));
+  payload.append("Minimum applied", state.minApplied ? "Yes — $150 minimum" : "No");
+  payload.append("TOTAL QUOTED", money(state.total));
+  payload.append("Customer notes", notes || "None");
+  payload.append("Submitted", new Date().toLocaleString());
+
+  sending = true;
+  btn.disabled = true;
+  btn.textContent = "Sending…";
+
+  fetch(FORM_ENDPOINT, { method: "POST", body: payload, headers: { "Accept": "application/json" } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (data && (data.success === true || data.success === "true")){
+        say("good",
+            "Estimate sent — " + money(state.total),
+            "Your reference is <b style='display:inline'>" + ref + "</b>. We’ve sent the details to our office and we’ll call " + phone + " to book a date.");
+        btn.textContent = "Estimate sent";
+        form.reset();
+      } else {
+        throw new Error("rejected");
+      }
+    })
+    .catch(function(){
+      sending = false;
+      btn.disabled = false;
+      btn.textContent = "Send my estimate";
+      say("bad", "That didn’t send",
+          "Please try once more, or call us on <a href='tel:+15550134477'>(555) 013-4477</a> and we’ll take your details over the phone. Your estimate is " + money(state.total) + ".");
+    });
+});
+
+price();
+</script>
+</body>
+</html>
