@@ -2,7 +2,7 @@
 
 A single-page quote calculator a pressure washing company can use to give a customer a price on the spot. The customer picks what needs cleaning, enters measurements, and the price updates as they type. On submit, the details and the quote are emailed to the office.
 
-**Live page:** _(add your GitHub Pages URL here after deploying)_
+Live page: https://raynoralejo-collab.github.io/pressure-washing-estimate/
 
 ---
 
